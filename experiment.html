@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cryptography Lab | Experiment Workbench - Bcrypt</title>
+    <meta name="description" content="Interactive Bcrypt Hash Generator, Match Verifier, Random Salt Demonstration, and Modular Format Inspector.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bcrypt.js client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">Virtual Cryptography Lab</span>
+                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
+                <a href="theory.html" class="nav-link"><i class="fa-solid fa-book-open"></i> Theory</a>
+                <a href="procedure.html" class="nav-link"><i class="fa-solid fa-list-check"></i> Procedure</a>
+                <a href="pipeline.html" class="nav-link"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
+                <a href="experiment.html" class="nav-link active"><i class="fa-solid fa-flask"></i> Experiment</a>
+                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
+                <a href="references.html" class="nav-link"><i class="fa-solid fa-book-bookmark"></i> References</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-flask section-icon"></i> Interactive Experiment Workbench</h2>
+            </div>
+            <p class="section-intro">Execute live password hashing, match verification, salt non-determinism testing, and modular hash format parsing.</p>
+
+            <div class="grid-2 gap-lg">
+                <!-- Tool A: Hash Generator -->
+                <div class="workbench-card">
+                    <div class="wb-header">
+                        <h3><i class="fa-solid fa-key text-cyan"></i> 1. Bcrypt Hash Generator</h3>
+                    </div>
+                    <form id="hashGenForm" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="pwdInput">Enter Plaintext Password:</label>
+                            <div class="input-with-meta">
+                                <input type="password" id="pwdInput" class="form-control" placeholder="e.g. CyberPass2026!#" value="Crypt@2026Lab" autocomplete="off" required>
+                                <button type="button" class="btn-toggle-pwd" id="togglePwdBtn" aria-label="Toggle Password Visibility"><i class="fa-solid fa-eye"></i></button>
+                            </div>
+                            <div class="byte-counter-bar">
+                                <span class="byte-text" id="byteText">Byte Length: 13 / 72 bytes</span>
+                                <div class="progress-track"><div class="progress-fill" id="byteProgressFill" style="width: 18%;"></div></div>
+                            </div>
+                            <div class="warn-banner hidden" id="byteWarnBanner">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Warning:</strong> Password exceeds 72 bytes! Bytes after position 72 will be silently truncated by Bcrypt.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="costSelect">Select Cost Factor (C):</label>
+                            <select id="costSelect" class="form-control">
+                                <option value="4">Cost 4 (16 rounds - Test)</option>
+                                <option value="8">Cost 8 (256 rounds - Fast)</option>
+                                <option value="10" selected>Cost 10 (1,024 rounds - Recommended Baseline)</option>
+                                <option value="12">Cost 12 (4,096 rounds - High Security)</option>
+                            </select>
+                            <small class="text-muted">Rounds calculated as 2<sup>Cost Factor</sup>. Cost 10 executes 1,024 rounds.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-cyan btn-block" id="btnGenHash">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Bcrypt Hash
+                        </button>
+                    </form>
+
+                    <!-- Hash Output Result Box -->
+                    <div class="result-box mt-3" id="hashResultBox">
+                        <div class="result-placeholder" id="hashPlaceholder">
+                            <i class="fa-solid fa-shield-cat placeholder-icon"></i>
+                            <p>Enter a password and click generate to compute the Bcrypt hash.</p>
+                        </div>
+                        <div class="hash-output-wrapper hidden" id="hashOutputWrapper">
+                            <div class="out-label">Generated Bcrypt Hash String (60 chars):</div>
+                            <div class="hash-display-code" id="hashOutputText">$2b$10$...</div>
+                            <div class="out-actions">
+                                <button class="btn btn-xs btn-outline" id="btnCopyHash"><i class="fa-solid fa-copy"></i> Copy Hash</button>
+                                <button class="btn btn-xs btn-outline" id="btnSendToVerify"><i class="fa-solid fa-share"></i> Send to Verifier</button>
+                            </div>
+                            
+                            <!-- Metrics Cards -->
+                            <div class="metrics-row grid-3">
+                                <div class="metric-card">
+                                    <span class="m-val" id="metricTime">0.00 ms</span>
+                                    <span class="m-lbl"><i class="fa-solid fa-stopwatch"></i> Execution Time</span>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="m-val" id="metricRounds">1,024</span>
+                                    <span class="m-lbl"><i class="fa-solid fa-arrows-rotate"></i> Work Rounds (2<sup>Cost</sup>)</span>
+                                </div>
+                                <div class="metric-card">
+                                    <span class="m-val" id="metricLength">60 Chars</span>
+                                    <span class="m-lbl"><i class="fa-solid fa-ruler-horizontal"></i> Hash String Length</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool B: Hash Verifier -->
+                <div class="workbench-card">
+                    <div class="wb-header">
+                        <h3><i class="fa-solid fa-square-check text-violet"></i> 2. Password Match Verifier</h3>
+                    </div>
+                    <form id="verifyForm" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="verifyHashInput">Target Bcrypt Hash to Test Against:</label>
+                            <input type="text" id="verifyHashInput" class="form-control code-font" placeholder="e.g. $2b$10$..." autocomplete="off" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="verifyPwdInput">Candidate Password to Check:</label>
+                            <input type="password" id="verifyPwdInput" class="form-control" placeholder="Enter candidate password to verify" autocomplete="off" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-violet btn-block" id="btnVerify">
+                            <i class="fa-solid fa-magnifying-glass"></i> Verify Password Match
+                        </button>
+                    </form>
+
+                    <!-- Verification Banner -->
+                    <div class="verify-banner-box mt-3" id="verifyBannerBox">
+                        <div class="v-placeholder" id="verifyPlaceholder">
+                            <i class="fa-solid fa-lock placeholder-icon"></i>
+                            <p>Provide a target hash and candidate password to run verification.</p>
+                        </div>
+                        <div class="v-result hidden" id="verifyResultWrapper">
+                            <div class="v-status-card" id="vStatusCard">
+                                <i class="v-icon fa-solid" id="vIcon"></i>
+                                <div class="v-text">
+                                    <h4 id="vTitle">Match Result</h4>
+                                    <p id="vDesc">Verification message</p>
+                                </div>
+                            </div>
+                            <div class="v-meta" id="vMetaText">Verified in 0.00 ms</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool C: Random Salt & Non-Determinism Demonstration -->
+            <div class="workbench-card mt-4">
+                <div class="wb-header">
+                    <h3><i class="fa-solid fa-dice text-green"></i> 3. Random Salt Demonstration (Non-Deterministic Hashing)</h3>
+                </div>
+                <p>Demonstrate that hashing the <strong>exact same password</strong> multiple times produces <strong>completely distinct hashes</strong> due to unique 128-bit random salt generation.</p>
+                
+                <div class="salt-demo-controls">
+                    <div class="input-inline">
+                        <label for="saltDemoPwd">Test Password:</label>
+                        <input type="text" id="saltDemoPwd" class="form-control" value="SameSecretPassword123" placeholder="Enter test password">
+                        <button class="btn btn-green" id="btnRunSaltDemo"><i class="fa-solid fa-rotate-right"></i> Generate 3 Hashes for Same Password</button>
+                    </div>
+                </div>
+
+                <div class="salt-outputs grid-3 mt-3" id="saltOutputsGrid">
+                    <div class="salt-out-card">
+                        <div class="salt-card-header"><span class="badge">Run #1</span></div>
+                        <div class="salt-code" id="saltHash1">Click button to run salt demo...</div>
+                        <div class="salt-extracted" id="saltVal1">Salt: --</div>
+                    </div>
+                    <div class="salt-out-card">
+                        <div class="salt-card-header"><span class="badge">Run #2</span></div>
+                        <div class="salt-code" id="saltHash2">Click button to run salt demo...</div>
+                        <div class="salt-extracted" id="saltVal2">Salt: --</div>
+                    </div>
+                    <div class="salt-out-card">
+                        <div class="salt-card-header"><span class="badge">Run #3</span></div>
+                        <div class="salt-code" id="saltHash3">Click button to run salt demo...</div>
+                        <div class="salt-extracted" id="saltVal3">Salt: --</div>
+                    </div>
+                </div>
+
+                <div class="salt-verify-actions mt-3">
+                    <button class="btn btn-outline" id="btnVerifyAllSalts" disabled><i class="fa-solid fa-circle-check"></i> Verify All 3 Distinct Hashes Against "SameSecretPassword123"</button>
+                    <div class="salt-verify-status" id="saltVerifyStatus"></div>
+                </div>
+            </div>
+
+            <!-- Tool D: Hash Format Inspector -->
+            <div class="workbench-card mt-4">
+                <div class="wb-header">
+                    <h3><i class="fa-solid fa-code text-orange"></i> 4. Interactive Hash Structure Inspector & Breakdown</h3>
+                </div>
+                <p>Paste any valid 60-character Bcrypt hash to disassemble it into its cryptographic subcomponents.</p>
+
+                <div class="form-group">
+                    <label for="inspectorInput">Input Bcrypt Hash String:</label>
+                    <input type="text" id="inspectorInput" class="form-control code-font" value="$2b$10$nOUIs22CharsOfSaltHere...31CharsOfHashDigestHere..." placeholder="Paste hash e.g. $2b$10$...">
+                </div>
+
+                <div class="inspector-display-area" id="inspectorDisplay">
+                    <div class="parsed-segments">
+                        <span class="seg seg-ver" id="segVer" title="Algorithm Identifier">$2b$</span>
+                        <span class="seg seg-cost" id="segCost" title="Cost Factor">10$</span>
+                        <span class="seg seg-salt" id="segSalt" title="128-bit Salt (22 base64 chars)">nOUIs22CharsOfSaltHere</span>
+                        <span class="seg seg-digest" id="segDigest" title="192-bit Hash Digest (31 base64 chars)">...31CharsOfHashDigestHere...</span>
+                    </div>
+
+                    <div class="segment-details-grid grid-4 mt-3">
+                        <div class="detail-box">
+                            <span class="d-label">Algorithm Prefix</span>
+                            <span class="d-val text-cyan" id="detailVer">$2b$</span>
+                            <span class="d-desc">OpenBSD Revision B</span>
+                        </div>
+                        <div class="detail-box">
+                            <span class="d-label">Cost Factor (C)</span>
+                            <span class="d-val text-orange" id="detailCost">10</span>
+                            <span class="d-desc" id="detailRounds">2<sup>10</sup> = 1,024 Rounds</span>
+                        </div>
+                        <div class="detail-box">
+                            <span class="d-label">Salt Component</span>
+                            <span class="d-val text-violet" id="detailSaltLen">22 Chars</span>
+                            <span class="d-desc">128-bit Random CSPRNG Salt</span>
+                        </div>
+                        <div class="detail-box">
+                            <span class="d-label">Ciphertext Digest</span>
+                            <span class="d-val text-green" id="detailDigestLen">31 Chars</span>
+                            <span class="d-desc">192-bit Ciphertext Digest</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
+            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

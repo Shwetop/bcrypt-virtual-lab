@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cryptography Lab | Aim & Overview - Bcrypt Password Hashing</title>
+    <meta name="description" content="Virtual Cryptography Lab module for Bcrypt password hashing, salt randomness, 72-byte limitation, and security analysis.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bcrypt.js client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">Virtual Cryptography Lab</span>
+                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link active"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
+                <a href="theory.html" class="nav-link"><i class="fa-solid fa-book-open"></i> Theory</a>
+                <a href="procedure.html" class="nav-link"><i class="fa-solid fa-list-check"></i> Procedure</a>
+                <a href="pipeline.html" class="nav-link"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
+                <a href="experiment.html" class="nav-link"><i class="fa-solid fa-flask"></i> Experiment</a>
+                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
+                <a href="references.html" class="nav-link"><i class="fa-solid fa-book-bookmark"></i> References</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <div class="badge-tag"><i class="fa-solid fa-lock"></i> Adaptive Password Security</div>
+                <h1>Bcrypt Password Hashing & Security Analysis</h1>
+                <p>Explore salted password hashing, key stretching, the $2b$ modular format, the 72-byte password limitation, and non-deterministic salt security in your browser.</p>
+                <div class="hero-actions">
+                    <a href="experiment.html" class="btn btn-primary"><i class="fa-solid fa-play"></i> Start Experiment</a>
+                    <a href="theory.html" class="btn btn-outline"><i class="fa-solid fa-circle-info"></i> Read Theory</a>
+                </div>
+            </div>
+            <div class="hero-card">
+                <div class="hash-preview-box">
+                    <div class="preview-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="preview-title">Sample Bcrypt Hash Output</span>
+                    </div>
+                    <div class="preview-code">
+                        <span class="token-ver">$2b$</span><span class="token-cost">10$</span><span class="token-salt">nOUIs...22chars...</span><span class="token-hash">31charsHashDigest</span>
+                    </div>
+                    <div class="preview-labels">
+                        <span class="lbl-ver"><i class="fa-solid fa-tag"></i> Ver: $2b$</span>
+                        <span class="lbl-cost"><i class="fa-solid fa-sliders"></i> Cost: 10 (1024 rounds)</span>
+                        <span class="lbl-salt"><i class="fa-solid fa-dice"></i> 128-bit Salt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aim & Objectives -->
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-bullseye section-icon"></i> Aim & Learning Objectives</h2>
+            </div>
+            <div class="aim-content grid-2">
+                <div class="info-box accent-cyan">
+                    <h3><i class="fa-solid fa-flag"></i> Aim</h3>
+                    <p>To understand, implement, and analyze the <strong>Bcrypt adaptive password hashing algorithm</strong>. This includes evaluating the function of cryptographic salts, parsing modular hash string components, demonstrating non-deterministic hash outputs for identical passwords, and analyzing key stretching mechanisms.</p>
+                </div>
+                <div class="info-box accent-violet">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Learning Objectives</h3>
+                    <ul class="bullet-list">
+                        <li><i class="fa-solid fa-check check-icon"></i> Differentiate between <strong>one-way hashing</strong> and <strong>two-way encryption</strong>.</li>
+                        <li><i class="fa-solid fa-check check-icon"></i> Explain why fast hash algorithms (MD5, SHA-256) are vulnerable to GPU rainbow table attacks.</li>
+                        <li><i class="fa-solid fa-check check-icon"></i> Parse the standard Bcrypt format: <code>$identifier$cost$salt+hash</code>.</li>
+                        <li><i class="fa-solid fa-check check-icon"></i> Demonstrate how random salts prevent pre-computed dictionary attacks.</li>
+                        <li><i class="fa-solid fa-check check-icon"></i> Identify the <strong>72-byte password length limitation</strong> inherent to Eksblowfish.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lab Module Directory Cards -->
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-compass section-icon"></i> Lab Module Navigation</h2>
+            </div>
+            <p class="section-intro">Select a section below to open its dedicated lab page:</p>
+
+            <div class="grid-3 gap-lg">
+                <a href="theory.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-book-open mod-icon text-cyan"></i>
+                        <h3>1. Cryptographic Theory</h3>
+                        <p>Learn hashing vs. encryption, salt entropy, Blowfish key expansion, and the 72-byte limit.</p>
+                        <span class="mod-btn">Read Theory &rarr;</span>
+                    </div>
+                </a>
+
+                <a href="procedure.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-list-check mod-icon text-violet"></i>
+                        <h3>2. Lab Procedure</h3>
+                        <p>Follow step-by-step instructions for conducting hashing, verification, and salt testing.</p>
+                        <span class="mod-btn">View Procedure &rarr;</span>
+                    </div>
+                </a>
+
+                <a href="pipeline.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-diagram-project mod-icon text-green"></i>
+                        <h3>3. Pipeline Visualizer</h3>
+                        <p>Step through the 5-stage internal cryptographic pipeline of Bcrypt password generation.</p>
+                        <span class="mod-btn">Launch Pipeline &rarr;</span>
+                    </div>
+                </a>
+
+                <a href="experiment.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-flask mod-icon text-orange"></i>
+                        <h3>4. Main Experiment</h3>
+                        <p>Generate hashes, verify passwords, test random salt non-determinism, and inspect hash format.</p>
+                        <span class="mod-btn">Open Experiment &rarr;</span>
+                    </div>
+                </a>
+
+                <a href="quiz.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-graduation-cap mod-icon text-cyan"></i>
+                        <h3>5. Self-Assessment Quiz</h3>
+                        <p>Test your knowledge with multiple-choice questions, instant scoring, and explanations.</p>
+                        <span class="mod-btn">Take Quiz &rarr;</span>
+                    </div>
+                </a>
+
+                <a href="references.html" class="module-card-link">
+                    <div class="mod-card">
+                        <i class="fa-solid fa-book-bookmark mod-icon text-violet"></i>
+                        <h3>6. References & Feedback</h3>
+                        <p>Access academic papers, RFC standards, and submit feedback for this laboratory module.</p>
+                        <span class="mod-btn">View References &rarr;</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
+            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

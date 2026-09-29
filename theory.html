@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cryptography Lab | Cryptographic Theory - Bcrypt</title>
+    <meta name="description" content="Cryptographic theory of Bcrypt: Hashing vs Encryption, Salt entropy, Modular $2b$ hash structure, and 72-byte limit.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bcrypt.js client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">Virtual Cryptography Lab</span>
+                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
+                <a href="theory.html" class="nav-link active"><i class="fa-solid fa-book-open"></i> Theory</a>
+                <a href="procedure.html" class="nav-link"><i class="fa-solid fa-list-check"></i> Procedure</a>
+                <a href="pipeline.html" class="nav-link"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
+                <a href="experiment.html" class="nav-link"><i class="fa-solid fa-flask"></i> Experiment</a>
+                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
+                <a href="references.html" class="nav-link"><i class="fa-solid fa-book-bookmark"></i> References</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-book-open section-icon"></i> Cryptographic Theory & Concepts</h2>
+            </div>
+            <p class="section-intro">Master the theoretical foundations of password security, cryptographic salt entropy, key stretching, and Blowfish cipher constraints.</p>
+
+            <!-- Theory Navigation Tabs -->
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="tab-hashing-vs-enc"><i class="fa-solid fa-arrows-split-up-and-left"></i> Hashing vs Encryption</button>
+                    <button class="tab-btn" data-tab="tab-why-bcrypt"><i class="fa-solid fa-shield-virus"></i> Why Bcrypt?</button>
+                    <button class="tab-btn" data-tab="tab-salt-rounds"><i class="fa-solid fa-dice"></i> Salt & Work Factor</button>
+                    <button class="tab-btn" data-tab="tab-hash-format"><i class="fa-solid fa-code-branch"></i> Hash Structure</button>
+                    <button class="tab-btn" data-tab="tab-72byte"><i class="fa-solid fa-triangle-exclamation"></i> 72-Byte Limit</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Tab 1: Hashing vs Encryption -->
+                    <div class="tab-pane active" id="tab-hashing-vs-enc">
+                        <h3>Hashing vs. Encryption: Fundamental Distinction</h3>
+                        <p>A common misconception in security is confusing <strong>hashing</strong> with <strong>encryption</strong>. Both use mathematical functions, but their design goals and reversibility differ fundamentally.</p>
+                        <div class="comparison-grid">
+                            <div class="comp-card">
+                                <h4><i class="fa-solid fa-lock-open text-cyan"></i> Encryption (Two-Way)</h4>
+                                <ul>
+                                    <li><strong>Purpose:</strong> Confidentiality during data transmission or storage.</li>
+                                    <li><strong>Reversibility:</strong> <em>Reversible</em>. Ciphertext can be decrypted back to plaintext using a secret key.</li>
+                                    <li><strong>Key Requirement:</strong> Uses symmetric (AES, DES) or asymmetric (RSA) keys.</li>
+                                    <li><strong>Output Length:</strong> Proportional to input payload size.</li>
+                                    <li><strong>Use Case:</strong> SSL/TLS web traffic, encrypted disk storage, secure messaging.</li>
+                                </ul>
+                            </div>
+                            <div class="comp-card">
+                                <h4><i class="fa-solid fa-fingerprint text-violet"></i> Cryptographic Hashing (One-Way)</h4>
+                                <ul>
+                                    <li><strong>Purpose:</strong> Data integrity verification and safe authentication.</li>
+                                    <li><strong>Reversibility:</strong> <em>Irreversible</em>. It is mathematically infeasible to derive plaintext from a hash.</li>
+                                    <li><strong>Key Requirement:</strong> Does not require a secret decryption key.</li>
+                                    <li><strong>Output Length:</strong> Fixed length regardless of input size (e.g. Bcrypt is 60 chars).</li>
+                                    <li><strong>Use Case:</strong> User password storage, file checksums, digital signatures.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Why Bcrypt? -->
+                    <div class="tab-pane" id="tab-why-bcrypt">
+                        <h3>Why MD5 and SHA-256 Fail for Passwords</h3>
+                        <p>Traditional cryptographic hash functions like <strong>MD5</strong>, <strong>SHA-1</strong>, and <strong>SHA-256</strong> were designed for high throughput (hashing gigabytes of data per second). While ideal for integrity checks, high speed is a fatal flaw for password storage!</p>
+                        
+                        <div class="callout callout-warning">
+                            <i class="fa-solid fa-bolt callout-icon"></i>
+                            <div>
+                                <strong>The GPU & ASIC Threat:</strong> Modern consumer GPUs can compute over <strong>100 billion SHA-256 hashes per second</strong>. An attacker with a leaked password database can brute-force 8-character complex passwords in minutes using rainbow tables and parallel cracking tools like Hashcat.
+                            </div>
+                        </div>
+
+                        <h4>Enter Bcrypt: The Slow Hash Algorithm</h4>
+                        <p>Created by Niels Provos and David Mazières in 1999 based on the <strong>Blowfish cipher</strong>, Bcrypt introduces <strong>Key Stretching</strong> and an <strong>adaptive cost factor</strong>. It forces the CPU/GPU to perform thousands of rounds of expensive memory-hard operations for every single password attempt, making brute-force attacks computationally infeasible.</p>
+                    </div>
+
+                    <!-- Tab 3: Salt & Work Factor -->
+                    <div class="tab-pane" id="tab-salt-rounds">
+                        <h3>Cryptographic Salt & The Exponential Work Factor</h3>
+                        
+                        <h4>1. The Role of Cryptographic Salt</h4>
+                        <p>A <strong>Salt</strong> is a unique, randomly generated 128-bit (16-byte) string appended to the password before hashing. Bcrypt automatically embeds this salt into the final hash output.</p>
+                        <div class="salt-benefits">
+                            <div class="benefit-item">
+                                <i class="fa-solid fa-shield-cat"></i>
+                                <div>
+                                    <strong>Defeats Rainbow Tables:</strong> Rainbow tables are giant precomputed lookup tables of plaintext-to-hash pairs. Adding a unique 128-bit salt means attackers must compute a custom rainbow table for every single user salt (2<sup>128</sup> variations).
+                                </div>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <div>
+                                    <strong>Prevents Hash Correlation:</strong> If two users have the exact same password (e.g., <code>"Password123"</code>), different random salts ensure their resulting Bcrypt hashes look completely unique in the database.
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">2. The 2<sup>Cost Factor</sup> Exponential Work Formula</h4>
+                        <p>Bcrypt's work factor is controlled by an integer parameter <strong>Cost Factor (C)</strong>. The total number of internal Blowfish key expansion iterations is calculated as:</p>
+                        <div class="math-box">
+                            Total Key Expansion Iterations = 2<sup>Cost Factor</sup>
+                        </div>
+                        <p>Because it is an exponential formula, increasing the cost factor by 1 <strong>doubles the CPU computation time</strong> required to hash a password.</p>
+                        <ul class="bullet-list">
+                            <li><strong>Cost 8:</strong> 2<sup>8</sup> = 256 iterations</li>
+                            <li><strong>Cost 10:</strong> 2<sup>10</sup> = 1,024 iterations (standard baseline)</li>
+                            <li><strong>Cost 12:</strong> 2<sup>12</sup> = 4,096 iterations (high security)</li>
+                            <li><strong>Cost 14:</strong> 2<sup>14</sup> = 16,384 iterations (heavy delay)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab 4: Hash Format -->
+                    <div class="tab-pane" id="tab-hash-format">
+                        <h3>Anatomy of a Bcrypt Modular Hash String</h3>
+                        <p>Bcrypt produces a self-contained 60-character ASCII string formatted using standard delimiters (<code>$</code>) and a modified modular Radix-64 encoding.</p>
+                        
+                        <div class="anatomy-diagram">
+                            <div class="anatomy-code">
+                                <span class="part part-id">$2b$</span><span class="part part-cost">10$</span><span class="part part-salt">N9qo8uLOickgx2ZMRZoMye</span><span class="part part-digest">IjZAgcfl7p92ldGxad68LJZdL17lhWy</span>
+                            </div>
+                            <div class="anatomy-legend grid-4">
+                                <div class="leg-item leg-id">
+                                    <div class="leg-tag">$2b$</div>
+                                    <strong>Algorithm Version</strong>
+                                    <p>Identifies algorithm variant. <code>$2a$</code> is traditional, <code>$2b$</code> fixes a wraparound bug in <code>$2a$</code> (OpenBSD 2014 revision).</p>
+                                </div>
+                                <div class="leg-item leg-cost">
+                                    <div class="leg-tag">10$</div>
+                                    <strong>Cost Factor (C)</strong>
+                                    <p>Two-digit cost parameter. Rounds = 2<sup>10</sup> = 1,024. Controls computational work scaling.</p>
+                                </div>
+                                <div class="leg-item leg-salt">
+                                    <div class="leg-tag">22 Chars</div>
+                                    <strong>Radix64 Encoded Salt</strong>
+                                    <p>128 bits (16 bytes) of cryptographically secure random salt encoded in 22 custom Radix64 characters.</p>
+                                </div>
+                                <div class="leg-item leg-digest">
+                                    <div class="leg-tag">31 Chars</div>
+                                    <strong>Ciphertext Hash Digest</strong>
+                                    <p>192 bits (24 bytes) resulting from 64 rounds of Blowfish encryption of the constant string <code>"OrpheanBeholderScryDoubt"</code>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 5: 72-Byte Limit -->
+                    <div class="tab-pane" id="tab-72byte">
+                        <h3>The 72-Byte Password Limitation</h3>
+                        <p>A critical architectural detail of Bcrypt is that it is built on top of <strong>Eksblowfish</strong> (Expensive Key Schedule Blowfish), which enforces a strict maximum password key length of <strong>72 bytes</strong> (72 ASCII characters).</p>
+                        
+                        <div class="callout callout-danger">
+                            <i class="fa-solid fa-triangle-exclamation callout-icon"></i>
+                            <div>
+                                <strong>The Silent Truncation Vulnerability:</strong> Any password longer than 72 bytes is <em>silently truncated</em> by standard Bcrypt implementations! For example, <code>"A" * 72 + "SuperSecretSuffix1"</code> and <code>"A" * 72 + "DifferentSuffix2"</code> will produce the EXACT same hash.
+                            </div>
+                        </div>
+
+                        <h4>Industry Standard Workaround: Pre-Hashing with SHA-256</h4>
+                        <p>To safely allow passwords of arbitrary length (e.g. 100+ character passphrases) without silent truncation, modern security frameworks pre-hash the raw password using SHA-256 before passing it to Bcrypt:</p>
+                        <div class="math-box">
+                            Bcrypt Input = Base64( SHA-256( Plaintext Password ) ) &nbsp; (Fixed 44 ASCII chars &lt; 72 bytes)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
+            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

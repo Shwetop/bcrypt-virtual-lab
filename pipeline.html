@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cryptography Lab | Pipeline Visualizer - Bcrypt</title>
+    <meta name="description" content="Interactive stage-by-stage password-to-hash flow visualizer for Bcrypt hashing pipeline.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bcrypt.js client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">Virtual Cryptography Lab</span>
+                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
+                <a href="theory.html" class="nav-link"><i class="fa-solid fa-book-open"></i> Theory</a>
+                <a href="procedure.html" class="nav-link"><i class="fa-solid fa-list-check"></i> Procedure</a>
+                <a href="pipeline.html" class="nav-link active"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
+                <a href="experiment.html" class="nav-link"><i class="fa-solid fa-flask"></i> Experiment</a>
+                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
+                <a href="references.html" class="nav-link"><i class="fa-solid fa-book-bookmark"></i> References</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-diagram-project section-icon"></i> Interactive Password-to-Hash Pipeline Visualizer</h2>
+            </div>
+            <p class="section-intro">Walk step-by-step through the internal cryptographic pipeline executed during a Bcrypt hash computation.</p>
+
+            <div class="pipeline-wrapper">
+                <div class="pipeline-steps-bar">
+                    <div class="p-step active" data-step="1">
+                        <span class="p-num">1</span>
+                        <span class="p-lbl">Input & Truncate</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-step" data-step="2">
+                        <span class="p-num">2</span>
+                        <span class="p-lbl">128-bit Salt</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-step" data-step="3">
+                        <span class="p-num">3</span>
+                        <span class="p-lbl">Eksblowfish (2<sup>Cost</sup>)</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-step" data-step="4">
+                        <span class="p-num">4</span>
+                        <span class="p-lbl">64 Encrypt Rounds</span>
+                    </div>
+                    <div class="p-line"></div>
+                    <div class="p-step" data-step="5">
+                        <span class="p-num">5</span>
+                        <span class="p-lbl">Modular Formatting</span>
+                    </div>
+                </div>
+
+                <div class="pipeline-display-box" id="pipelineDisplayBox">
+                    <div class="p-stage-content active" id="pstage-1">
+                        <div class="stage-badge"><i class="fa-solid fa-i-cursor"></i> Step 1: Input Pre-processing & 72-Byte Validation</div>
+                        <h3>Password Preparation & Length Checking</h3>
+                        <p>The plaintext password is converted to a UTF-8 byte array. If length exceeds 72 bytes, characters beyond index 71 are discarded due to Blowfish key schedule constraints.</p>
+                        <div class="stage-demo-box">
+                            <span class="demo-label">Sample Input:</span>
+                            <code class="demo-val">"CyberLabSecurity2026!#Pass" (26 Bytes) &rarr; Accepted without truncation</code>
+                        </div>
+                    </div>
+
+                    <div class="p-stage-content" id="pstage-2">
+                        <div class="stage-badge"><i class="fa-solid fa-dice-d20"></i> Step 2: Cryptographic CSPRNG Salt Generation</div>
+                        <h3>Generating 128-bit Random Salt</h3>
+                        <p>A Cryptographically Secure Pseudorandom Number Generator (CSPRNG) generates 16 raw bytes (128 bits) of unique random data to inject entropy into key expansion.</p>
+                        <div class="stage-demo-box">
+                            <span class="demo-label">Generated Raw Salt (16 Bytes Hex):</span>
+                            <code class="demo-val text-violet">0x7F 0x3A 0x9B 0x11 0x4E 0xC8 0xD2 0x0F 0x88 0x31 0xA4 0x7E 0x90 0x12 0x55 0xBC</code>
+                        </div>
+                    </div>
+
+                    <div class="p-stage-content" id="pstage-3">
+                        <div class="stage-badge"><i class="fa-solid fa-gears"></i> Step 3: Eksblowfish Key Expansion</div>
+                        <h3>Expensive Key Schedule (Key Stretching)</h3>
+                        <p>The password and salt are iteratively fed into Eksblowfish state initialization. The algorithm loops 2<sup>Cost Factor</sup> times (e.g. 2<sup>10</sup> = 1,024 rounds), repeatedly interweaving salt and password into the Blowfish P-array and S-boxes.</p>
+                        <div class="stage-demo-box">
+                            <span class="demo-label">Iteration Counter (Cost = 10):</span>
+                            <code class="demo-val text-cyan">Looping 1,024 rounds of Eksblowfish Key Expansion... [Memory & CPU Hard]</code>
+                        </div>
+                    </div>
+
+                    <div class="p-stage-content" id="pstage-4">
+                        <div class="stage-badge"><i class="fa-solid fa-lock"></i> Step 4: Ciphertext Generation (OrpheanBeholderScryDoubt)</div>
+                        <h3>64 Blowfish Encryption Rounds</h3>
+                        <p>Using the expanded key state, the constant 192-bit string <code>"OrpheanBeholderScryDoubt"</code> is encrypted 64 times in Electronic Codebook (ECB) mode to generate the 24-byte hash digest.</p>
+                        <div class="stage-demo-box">
+                            <span class="demo-label">Target Text:</span>
+                            <code class="demo-val">"OrpheanBeholderScryDoubt" &rarr; Encrypted to 24 raw bytes</code>
+                        </div>
+                    </div>
+
+                    <div class="p-stage-content" id="pstage-5">
+                        <div class="stage-badge"><i class="fa-solid fa-box-archive"></i> Step 5: Radix-64 Encoding & Formatting</div>
+                        <h3>Final Modular String Assembly</h3>
+                        <p>The 16-byte salt (22 Radix-64 chars) and 24-byte digest (31 Radix-64 chars) are concatenated with prefix <code>$2b$</code> and cost factor <code>10$</code> to produce the final 60-character string.</p>
+                        <div class="stage-demo-box">
+                            <span class="demo-label">Final 60-Character Bcrypt Output:</span>
+                            <code class="demo-val text-green">$2b$10$nOUIs22CharsOfSaltHere...31CharsOfHashDigestHere...</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-controls">
+                    <button class="btn btn-outline" id="btnPrevStage" disabled><i class="fa-solid fa-arrow-left"></i> Previous Step</button>
+                    <span class="stage-counter" id="stageCounter">Step 1 of 5</span>
+                    <button class="btn btn-primary" id="btnNextStage">Next Step <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
+            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

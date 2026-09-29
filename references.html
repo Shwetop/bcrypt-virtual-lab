@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cryptography Lab | References & Feedback - Bcrypt</title>
+    <meta name="description" content="Academic references, RFC standards, and student module feedback for Bcrypt password hashing.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bcrypt.js client library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">Virtual Cryptography Lab</span>
+                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
+                <a href="theory.html" class="nav-link"><i class="fa-solid fa-book-open"></i> Theory</a>
+                <a href="procedure.html" class="nav-link"><i class="fa-solid fa-list-check"></i> Procedure</a>
+                <a href="pipeline.html" class="nav-link"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
+                <a href="experiment.html" class="nav-link"><i class="fa-solid fa-flask"></i> Experiment</a>
+                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
+                <a href="references.html" class="nav-link active"><i class="fa-solid fa-book-bookmark"></i> References</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Academic References -->
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-book-bookmark section-icon"></i> Academic & Technical References</h2>
+            </div>
+            <ul class="ref-list">
+                <li>
+                    <i class="fa-solid fa-bookmark text-cyan"></i>
+                    <div>
+                        <strong>N. Provos and D. Mazières (1999).</strong> "A Future-Adaptable Password Scheme." <em>Proceedings of the USENIX Annual Technical Conference</em>, FREENIX Track, pp. 81–91.
+                    </div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-bookmark text-cyan"></i>
+                    <div>
+                        <strong>B. Schneier (1994).</strong> "Description of a New Variable-Length Key, 64-Bit Block Cipher (Blowfish)." <em>Fast Software Encryption, Cambridge Security Workshop</em>, Springer-Verlag, pp. 191–204.
+                    </div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-bookmark text-cyan"></i>
+                    <div>
+                        <strong>OWASP Password Storage Cheat Sheet.</strong> Open Web Application Security Project (OWASP). Guidelines for Adaptive Password Hashing.
+                    </div>
+                </li>
+                <li>
+                    <i class="fa-solid fa-bookmark text-cyan"></i>
+                    <div>
+                        <strong>RFC 2898 / PKCS #5.</strong> Password-Based Cryptography Specification Version 2.0.
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Feedback Form -->
+        <section class="lab-section card">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-paper-plane section-icon"></i> Student Feedback & Module Evaluation</h2>
+            </div>
+            <p class="section-intro">Rate your interactive learning experience with this Virtual Cryptography Lab module.</p>
+
+            <form id="feedbackForm" onsubmit="return false;">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="fbName">Student Name / Roll Number:</label>
+                        <input type="text" id="fbName" class="form-control" placeholder="e.g. Alex Johnson (CS-2026)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fbRating">Overall Module Rating:</label>
+                        <div class="star-rating" id="starRating">
+                            <i class="fa-star fa-regular" data-value="1"></i>
+                            <i class="fa-star fa-regular" data-value="2"></i>
+                            <i class="fa-star fa-regular" data-value="3"></i>
+                            <i class="fa-star fa-regular" data-value="4"></i>
+                            <i class="fa-star fa-regular" data-value="5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fbComments">Comments / Recommendations:</label>
+                    <textarea id="fbComments" class="form-control" rows="3" placeholder="Share your experience with password hashing, salt visualizer, or theory..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnSubmitFeedback"><i class="fa-solid fa-paper-plane"></i> Submit Module Feedback</button>
+            </form>
+
+            <div class="toast-notification hidden" id="toastNotification">
+                <i class="fa-solid fa-circle-check"></i> <span id="toastText">Thank you! Your feedback has been recorded successfully.</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
+            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
