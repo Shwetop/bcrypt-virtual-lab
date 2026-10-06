@@ -1,78 +1,77 @@
-# Virtual Cryptography Laboratory — Module 05: Bcrypt Password Hashing
+# Bcrypt Password Hashing & Security Analysis
 
-A complete, self-contained interactive web-based Virtual Cryptography Laboratory single-page module for learning, experimenting with, and analyzing the **Bcrypt Password Hashing Algorithm**.
+**Group:** Bcrypt (branch `group-bcrypt`)  
+**Members (per faculty allotment):** Shwet Shigwan, Daksh Shetty  
+**Experiment ID:** Group 11 (Module 11)  
+**Experiment Name:** Bcrypt Password Hashing & Security Analysis  
+**Folder:** `/experiments/bcrypt/`  
+**Entry File:** `index.html`  
+**Navigation Title:** Bcrypt  
+**Expected Navigation Link:** `/experiments/bcrypt/`  
+**Short Description:** Implement bcrypt password hashing and verification, analyze the effect of the cost factor on computational complexity, test non-deterministic salt generation, and evaluate the 72-byte key truncation limit.
 
 ---
 
-## 📌 Module Overview
-
-This web module is built using **HTML5**, **Vanilla CSS3 (Dark Cyber Theme)**, and **Vanilla JavaScript (ES6+)**. It operates as a clean **Single Page Application (SPA)** where all sections reside in `index.html` with smooth-scrolling header navigation and client-side execution.
+## Aim
+To study, implement, and analyze the **Bcrypt adaptive password hashing algorithm**. This includes evaluating the function of cryptographic salts, verifying passwords, formulating the exponential work factor ($2^{\text{Cost}}$), parsing modular hash formatting (`$2b$cost$salt+digest`), inspecting internal pipeline stages, and demonstrating the 72-byte truncation boundary.
 
 ---
 
-## 📁 File Directory
+## Required Libraries
+Bundled in repository `js/vendor/`, no extra installation needed:
+- `bcrypt.min.js` (Bcrypt adaptive hashing and verification compiled from C sources)
+- `../../js/common.js` (Virtual laboratory tab routing controller)
 
+---
+
+## Run Locally
+From the repository root:
+```bash
+python -m http.server 8000
 ```
-c:\Users\SHWET\OneDrive\Desktop\Bcrypt\
-├── index.html       # Single-Page Layout (Aim, Theory, Procedure, Pipeline, Experiment Workbench, Quiz, References)
-├── style.css        # CSS3 Modern Dark Cyber Theme & Glassmorphism Design System
-├── script.js        # Client-side Bcrypt Logic & Dynamic UI Engine
-└── README.md        # Comprehensive Module Documentation & Test Cases
-```
+Open [http://localhost:8000/experiments/bcrypt/index.html](http://localhost:8000/experiments/bcrypt/index.html) in your browser.
 
 ---
 
-## 🚀 Key Features & Learning Tools
-
-1. **Aim & Objectives (`#aim`)**:
-   - High-level overview of module learning goals and cryptographic concepts.
-
-2. **Comprehensive Theory & Concepts (`#theory`)**:
-   - One-way Cryptographic Hashing vs. Two-way Encryption.
-   - Flaws of fast hash functions (MD5, SHA-256) against GPU/ASIC rainbow table attacks.
-   - Purpose of 128-bit random CSPRNG salts.
-   - Modular Bcrypt hash structure (`$identifier$cost$salt+digest`).
-   - The $2^{\text{cost}}$ work factor formula.
-   - The **72-byte password length limitation** of Eksblowfish and SHA-256 pre-hashing workarounds.
-
-3. **Step-by-Step Procedure (`#procedure`)**:
-   - Clear numbered steps guiding students through hashing, verification, salt testing, and quiz evaluation.
-
-4. **Interactive Password-to-Hash Visualizer Pipeline (`#pipeline`)**:
-   - 5-stage animated visualizer breaking down input validation, salt generation, key stretching, 64-round Blowfish encryption, and modular formatting.
-
-5. **Experiment Workbench (`#experiment`)**:
-   - **Bcrypt Hash Generator**: Interactive cost selection (4 to 12), live millisecond timing via `performance.now()`, real-time UTF-8 byte counter, and 72-byte warning bar.
-   - **Password Match Verifier**: Verifies candidate passwords against target hashes with visual feedback.
-   - **Random Salt Demonstration**: Hashes the exact same password 3 times to visually prove non-deterministic hash generation, then verifies all 3 against the password.
-   - **Modular Hash Inspector**: Disassembles any 60-character Bcrypt hash into Version ($2b$), Cost Factor, Salt (22 chars / 128 bits), and Digest (31 chars / 192 bits).
-
-6. **Self-Assessment Quiz (`#quiz`)**:
-   - Interactive multiple-choice quiz with automatic scoring, instant option feedback, and detailed explanations.
-
-7. **Academic References & Feedback (`#references`)**:
-   - Academic paper citations (Provos & Mazières 1999, Schneier 1994 Blowfish) and OWASP cheat sheet links.
-   - Interactive star rating and student feedback form.
+## Experiment Sections (Tabs)
+1. **Aim & Objectives:** Core concepts, learning outcomes, and group allocation.
+2. **Theory (8 In-depth Sections & Active Recall):**
+   - Hashing vs. Encryption mathematical distinction.
+   - Why Bcrypt? (Fast vs Slow algorithms & GPU/ASIC resistance).
+   - Salt entropy & $2^C$ exponential work factor scaling table.
+   - 60-character modular hash anatomy breakdown ($2b$, cost, 22-char salt, 31-char digest).
+   - The 72-byte password limitation in Eksblowfish and SHA-256 pre-hashing workaround.
+   - Eksblowfish Architecture (P-Arrays, S-Boxes, and 4KB L1 Cache Footprint).
+   - Evolution of Revisions ($2, $2a, $2x, $2y, $2b$) and bug history.
+   - Modern Password Security: Bcrypt vs. Argon2id vs. PBKDF2, Pepper vs Salt architecture, and dynamic re-hashing on login.
+   - **Interactive Flashcards:** 6 active-recall flip cards for rapid self-testing.
+3. **Procedure:** 8 guided procedural steps.
+4. **Simulation (10 Interactive Workbench Tools & Guided Popups):**
+   - **Guided Tour & Concept Glossary Popups:** Beginner-friendly walk-through and glossary modal dialogs.
+   - **Tool 1: Bcrypt Hash Generator** with cost factor selection, dynamic cost advisor, live latency measurement (ms), calculated work rounds ($2^C$), byte counter progress bar, and 72-byte truncation warnings.
+   - **Tool 2: Password Match Verifier** with step-by-step verification flow modal.
+   - **Tool 3: Random Salt Demonstration** proving non-deterministic hashing with 128-bit CSPRNG salts.
+   - **Tool 4: Modular Hash Inspector** with clickable token popup modals for deep disassembly.
+   - **Tool 5: 5-Stage Eksblowfish Pipeline Stepper** with automated step-by-step playback.
+   - **Tool 6: 72-Byte Truncation Exploit & SHA-256 Mitigation Workbench** demonstrating real hash collisions on truncated passwords.
+   - **Tool 7: Hash Race (MD5 vs SHA-256 vs Bcrypt)** visual benchmark proving GPU speed vulnerability.
+   - **Tool 8: Hardware Sizing Benchmark** simulating authentication latency across microcontrollers, smartphones, and servers.
+   - **Tool 9: GPU Cracking Time Estimator** computing cracking durations across work factors $2^4$ to $2^{16}$.
+   - **Tool 10: Rainbow Table Attack Simulator** demonstrating precomputed hash lookups and salt immunity.
+5. **Assessment / Quiz:** 10 multiple-choice questions with instant scoring and detailed explanations.
+6. **References:** Standardized reference cards (USENIX Provos-Mazières 1999 paper, RFC 7914, OWASP Cheat Sheet, Solar Designer crypt_blowfish advisory).
+7. **Feedback:** Universal RSA-2048 encrypted feedback submission system.
 
 ---
 
-## 🧪 Test Cases & Expected Outputs
+## Test Cases
 
-| Test Case ID | Section | Feature / Component | Input Data | Expected Output | Verification Criteria |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TC-01** | Workbench | Hash Generation | Password: `Crypt@2026Lab`<br>Cost: `10` | 60-character string starting with `$2b$10$` | Execution time measured (> 0 ms); length = 60; rounds = 1,024. |
-| **TC-02** | Workbench | 72-Byte Warning Banner | 75 ASCII characters | Progress bar turns red; warning banner appears indicating silent truncation after byte 72. | UI warning displayed; input handled safely. |
-| **TC-03** | Workbench | Password Verification (Pass) | Candidate: `Crypt@2026Lab`<br>Target: Hash from TC-01 | Green banner: `✅ MATCH SUCCESSFUL!` | `bcrypt.compareSync` returns `true`. |
-| **TC-04** | Workbench | Password Verification (Fail) | Candidate: `WrongPass123`<br>Target: Hash from TC-01 | Red banner: `❌ MATCH FAILED!` | `bcrypt.compareSync` returns `false`. |
-| **TC-05** | Workbench | Random Salt Non-Determinism | Password: `SameSecretPassword123`<br>Click "Generate 3 Hashes" | 3 completely distinct hash strings generated side-by-side. | Extracted salts differ; verifying all 3 against `SameSecretPassword123` returns `true`. |
-| **TC-06** | Workbench | Modular Format Inspector | Input: `$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy` | Version: `$2b$`<br>Cost: `10` (1,024 rounds)<br>Salt: `N9qo8uLOickgx...` (22 chars)<br>Digest: `IjZAgcfl...` (31 chars) | Correct segment breakdown and length indicators. |
-| **TC-07** | Pipeline | Pipeline Visualizer | Click "Next Step" through to Step 5 | Progress bar updates from Step 1 to Step 5 with animated descriptions. | Stage counter updates to `Step 5 of 5`. |
-| **TC-08** | Quiz | Quiz Scoring | Select answers on Questions 1 to 5 | Instant green/red option feedback; score updates on top badge. | Explanations displayed per question. |
-
----
-
-## 🌐 External Dependencies
-
-1. **Bcrypt.js**: `https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js`
-2. **Font Awesome 6.4.0**: `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css`
-3. **Google Fonts**: `Inter` & `Fira Code`
+| # | Action | Expected Output |
+|---|---|---|
+| 1 | Generate hash with Cost = 10 | 60-character hash starting with `$2b$10$`, ~100 ms execution time, 1,024 rounds |
+| 2 | Increase Cost from 10 to 12 | Work rounds quadruple ($2^{12} = 4,096$), execution time scales accordingly (~400 ms) |
+| 3 | Enter password exceeding 72 bytes | Byte counter turns red, silent truncation warning banner appears |
+| 4 | Send hash to Verifier and verify matching password | Status banner displays green: "PASSWORD MATCH CONFIRMED" |
+| 5 | Verify hash with modified password character | Status banner displays red: "VERIFICATION FAILED (NO MATCH)" |
+| 6 | Run Random Salt Test on identical password | Three distinct hashes generated, all verify TRUE against the single password |
+| 7 | Paste generated hash into Modular Inspector | Disassembles accurately into Version, Cost, 22-char Salt, and 31-char Digest |

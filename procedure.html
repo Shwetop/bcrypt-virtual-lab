@@ -2,111 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Cryptography Lab | Procedure - Bcrypt</title>
-    <meta name="description" content="Step-by-step instructions for performing experiments with Bcrypt password hashing, match verification, and salt testing.">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Bcrypt.js client library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="refresh" content="0; url=index.html#procedure">
+    <title>Bcrypt Virtual Lab - Procedure</title>
+    <script>window.location.replace("index.html#procedure");</script>
 </head>
-<body>
-
-    <!-- Top Navigation Header -->
-    <header class="app-header">
-        <div class="header-container">
-            <div class="brand">
-                <i class="fa-solid fa-shield-halved brand-icon"></i>
-                <div class="brand-text">
-                    <span class="brand-title">Virtual Cryptography Lab</span>
-                    <span class="brand-subtitle">Module 05: Bcrypt Hashing</span>
-                </div>
-            </div>
-            <nav class="nav-menu" id="navMenu">
-                <a href="index.html" class="nav-link"><i class="fa-solid fa-bullseye"></i> Aim & Overview</a>
-                <a href="theory.html" class="nav-link"><i class="fa-solid fa-book-open"></i> Theory</a>
-                <a href="procedure.html" class="nav-link active"><i class="fa-solid fa-list-check"></i> Procedure</a>
-                <a href="pipeline.html" class="nav-link"><i class="fa-solid fa-diagram-project"></i> Pipeline</a>
-                <a href="experiment.html" class="nav-link"><i class="fa-solid fa-flask"></i> Experiment</a>
-                <a href="quiz.html" class="nav-link"><i class="fa-solid fa-graduation-cap"></i> Quiz</a>
-                <a href="references.html" class="nav-link"><i class="fa-solid fa-book-bookmark"></i> References</a>
-            </nav>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
-    </header>
-
-    <main class="main-wrapper">
-        <section class="lab-section card">
-            <div class="section-header">
-                <h2><i class="fa-solid fa-list-check section-icon"></i> Step-by-Step Lab Procedure</h2>
-            </div>
-            <p class="section-intro">Follow these sequential steps to conduct your virtual laboratory experiment.</p>
-
-            <div class="procedure-steps">
-                <div class="step-card">
-                    <div class="step-num">1</div>
-                    <div class="step-body">
-                        <h4>Password Hashing Experiment</h4>
-                        <p>Navigate to the <a href="experiment.html">Experiment Page</a>. Enter any passphrase in the <strong>Hash Generator</strong>. Select a cost factor (e.g. 10). Click <em>Generate Bcrypt Hash</em> to observe random salt generation, execution time in milliseconds, and the resulting 60-character string.</p>
-                    </div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">2</div>
-                    <div class="step-body">
-                        <h4>Password Verification Check</h4>
-                        <p>Use the <strong>Password Match Verifier</strong> on the Experiment page. Input a candidate password and paste a target Bcrypt hash. Click <em>Verify Password Match</em> to test verification outcomes.</p>
-                    </div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">3</div>
-                    <div class="step-body">
-                        <h4>Salt Randomness Verification</h4>
-                        <p>Use the <strong>Random Salt Demo</strong> on the Experiment page to hash the exact same password 3 times consecutively. Observe that each run generates a unique hash string. Run the verification check to prove that all 3 distinct hashes successfully match the original password.</p>
-                    </div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">4</div>
-                    <div class="step-body">
-                        <h4>Modular Format Parsing</h4>
-                        <p>Inspect the generated string using the interactive <strong>Hash Breakdown Tool</strong> on the Experiment page. Hover or click on each segment to isolate the Version Identifier (<code>$2b$</code>), Cost Factor, 128-bit Salt, and 192-bit Hash Digest.</p>
-                    </div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">5</div>
-                    <div class="step-body">
-                        <h4>Pipeline Visualization & Self-Assessment</h4>
-                        <p>Step through the <a href="pipeline.html">Pipeline Visualizer</a> to see internal Eksblowfish stages, then complete the <a href="quiz.html">Self-Assessment Quiz</a> to evaluate your understanding.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-4 text-center">
-                <a href="experiment.html" class="btn btn-primary"><i class="fa-solid fa-play"></i> Open Experiment Workbench</a>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-container">
-            <p>&copy; 2026 Virtual Cryptography Laboratory. Educational Module for Bcrypt Password Hashing.</p>
-            <p class="footer-subtext">Client-Side Implementation | Multi-Page Architecture</p>
-        </div>
-    </footer>
-
-    <!-- Custom JavaScript -->
-    <script src="script.js"></script>
+<body style="background:#1e1e2e;color:#cdd6f4;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+    <p>Loading Procedure... <a href="index.html#procedure" style="color:#89b4fa;">Click here if not redirected</a></p>
 </body>
 </html>
